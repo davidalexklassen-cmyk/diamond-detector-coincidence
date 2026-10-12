@@ -17,16 +17,16 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     double pcb_hlength = 30.*mm;
     double pcb_hwidth = 30.*mm;
-    G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, 0.5*mm);
+    G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, 500*um);
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
     G4Material* scatterMat = nist->FindOrBuildMaterial("G4_Au");
-    G4Box* solidScatter = new G4Box("solidScatter", 25*mm, 50*mm, 0.15*mm);
+    G4Box* solidScatter = new G4Box("solidScatter", 25*mm, 50*mm, 1.0*um);
     G4LogicalVolume* logicScatter = new G4LogicalVolume(solidScatter, scatterMat, "logicScatter");
-    G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicScatter, "physScatter", logicWorld, false, 0, true);
+    G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicScatter, "Foil", logicWorld, false, 0, true);
 
     G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3); //molecular mass from wikipedia -> doublecheck
-    G4Box* solidDetector = new G4Box("solidDetector", 5.*mm, 5.*mm, 0.25*mm);
+    G4Box* solidDetector = new G4Box("solidDetector", 5.*mm, 5.*mm, 25.*um);
     logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
     
     G4Box* solidHole = new G4Box("solidHole", 5.*mm, 5.*mm, 0.6*mm);
