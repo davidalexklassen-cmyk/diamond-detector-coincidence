@@ -15,55 +15,100 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
-    double pcb_hlength = 30.*mm;
-    double pcb_hwidth = 30.*mm;
+    double pcb_hlength = 15. * mm;
+    double pcb_hwidth = 15. * mm;
     G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, 500*um);
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
-    G4Material* scatterMat = nist->FindOrBuildMaterial("G4_Au");
-    G4Box* solidScatter = new G4Box("solidScatter", 25*mm, 50*mm, 1.0*um);
-    G4LogicalVolume* logicScatter = new G4LogicalVolume(solidScatter, scatterMat, "logicScatter");
-    G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicScatter, "Foil", logicWorld, false, 0, true);
-
     G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3); //molecular mass from wikipedia -> doublecheck
-    G4Box* solidDetector = new G4Box("solidDetector", 5.*mm, 5.*mm, 25.*um);
+    G4Box* solidDetector = new G4Box("solidDetector", 2.15*mm, 2.15*mm, 25.*um);
     logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
-    
-    G4Box* solidHole = new G4Box("solidHole", 5.*mm, 5.*mm, 0.6*mm);
-    G4Material* pcbMat = new G4Material("FR4", 1.86*g/cm3, 4);  //chatted material, placeholder
+
+    G4Material* scatterMatHolder = nist->FindOrBuildMaterial("G4_Al");
+    G4VSolid* solidScatter = new G4Box("solidScatter", 5.*mm, 15.*mm, 0.5*mm);
+    G4Tubs* solidZylHole = new G4Tubs("solidZylHole", 0, 3.*mm, 1.*mm, 0.*deg, 360. * deg);
+    G4Box* solidHoleScatter = new G4Box("solidHoleScatter", 3.*mm, 5.*mm, 1.*mm);
+
+    solidScatter = new G4SubtractionSolid("scatter_hole_1", solidScatter, solidZylHole, nullptr, G4ThreeVector(0., 5*mm, 0.));
+    solidScatter = new G4SubtractionSolid("scatter_hole_2", solidScatter, solidZylHole, nullptr, G4ThreeVector(0., -5*mm, 0.));
+    solidScatter = new G4SubtractionSolid("scatterWithHoles", solidScatter, solidHoleScatter, nullptr, G4ThreeVector(0., 0., 0.));
+
+    G4LogicalVolume* logicScatter = new G4LogicalVolume(solidScatter, scatterMatHolder, "logicScatterHolder");
+    G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicScatter, "Holder", logicWorld, false, 0, true);
+
+    double foil_hthickness = 0.1*mm; // need to add real, half thickness
+    G4Material* scatterMat = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
+    G4VSolid* solidFoilBody = new G4Box("solidFoilBody", 3.*mm, 5.*mm, foil_hthickness); 
+    G4VSolid* solidFoilTop = new G4Tubs("solidFoilTop", 0, 3.*mm, foil_hthickness, 0.*deg, 180. * deg);
+    G4VSolid* solidFoilBottom = new G4Tubs("solidFoilBottom", 0, 3.*mm, 0.1*mm, 0.*deg, 180. * deg);
+    G4RotationMatrix* mirrorFoilBottom = new G4RotationMatrix();
+    mirrorFoilBottom->rotateZ(180*deg);
+    G4UnionSolid* pillFoiltop = new G4UnionSolid("union_1", solidFoilBody, solidFoilTop, nullptr, G4ThreeVector(0., 5.*mm, 0.));
+    G4UnionSolid* pillFoil = new G4UnionSolid("union_2", pillFoiltop, solidFoilBottom, mirrorFoilBottom, G4ThreeVector(0., -5.*mm, 0.));
+    G4LogicalVolume* logicPillFoil = new G4LogicalVolume(pillFoil, scatterMat, "logicPillFoil");
+    G4VPhysicalVolume* physFoil = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicPillFoil, "Foil", logicWorld, false, 0, true);
+
+    bool type = true;
+
+    G4Material* pcbMat = nist->FindOrBuildMaterial("G4_BAKELITE");
+
+    double dod_distance_x = 5.5 * mm; //detector on detector distance centre to centre
+    double dod_distance_y = 5.5 * mm;
+
+    /*Detector builds up ->
+    0 1 2 3 4
+    5 6 7 8 9
+    */
+
+    G4Box* solidHole = new G4Box("solidHole", 2.15*mm, 2.15*mm, 1*mm);
     G4VSolid* solidPCB = new G4Box("solidPCB", pcb_hlength, pcb_hwidth, 0.5*mm);
 
-    G4Element* elH  = nist->FindOrBuildElement("H");
-    G4Element* elC  = nist->FindOrBuildElement("C");
-    G4Element* elO  = nist->FindOrBuildElement("O");
-    G4Element* elSi = nist->FindOrBuildElement("Si");
-
-    pcbMat->AddElement(elH,  0.03);
-    pcbMat->AddElement(elC,  0.28);
-    pcbMat->AddElement(elO,  0.49);
-    pcbMat->AddElement(elSi, 0.20);
-
-    for (int ix = 0; ix <3; ix++)
+    if (type == false)
     {
-        for(int jx = 0; jx <3; jx++)
+        for (int ix = 0; ix <5; ix++)
         {
-            new G4SubtractionSolid("PCB_with_holes", solidPCB, solidHole, nullptr, G4ThreeVector((1 - jx) * 15.*mm, (ix - 1) * 15.*mm, 0.));
+            for(int jx = 0; jx <5; jx++)
+            {
+                solidPCB = new G4SubtractionSolid("hole_gen", solidPCB, solidHole, nullptr, G4ThreeVector((jx - 2) * dod_distance_x, (ix - 2) * dod_distance_y, 0.));
+            }
+        }
+
+        G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, pcbMat, "logicPCB");
+        new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), logicPCB, "physPCB", logicArray, false, 0, true);
+
+        for (int ix = 0; ix <5; ix++)
+        {
+            for(int jx = 0; jx <5; jx++)
+            {
+                new G4PVPlacement(0, G4ThreeVector((jx - 2) * dod_distance_x, (ix - 2) * dod_distance_y, 0.), logicDetector, "solidDetector", logicArray, false, ix * 5 + jx, true);
+            }
         }
     }
-
-    G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, pcbMat, "logicPCB");
-
-    for (int ix = 0; ix <3; ix++)
+    else if (type == true)
     {
-        for(int jx = 0; jx <3; jx++)
+        for (int ix = 0; ix <3; ix++)
         {
-            new G4PVPlacement(0, G4ThreeVector((1 - jx) * 15.*mm, (ix - 1) * 15.*mm, 0.), logicDetector, "solidDetector", logicArray, false, jx*3 + ix, true);
+            for(int jx = 0; jx <3; jx++)
+            {
+                solidPCB = new G4SubtractionSolid("hole_gen", solidPCB, solidHole, nullptr, G4ThreeVector((1 - jx) * dod_distance_x, (ix - 1) * dod_distance_y, 0.));
+            }
         }
-    }
+
+        G4LogicalVolume* logicPCB = new G4LogicalVolume(solidPCB, pcbMat, "logicPCB");
+        new G4PVPlacement(nullptr, G4ThreeVector(0.,0.,0.), logicPCB, "physPCB", logicArray, false, 0, true);
+
+        for (int ix = 0; ix <3; ix++)
+        {
+            for(int jx = 0; jx <3; jx++)
+            {
+                new G4PVPlacement(0, G4ThreeVector((1 - jx) * dod_distance_x, (ix - 1) * dod_distance_y, 0.), logicDetector, "solidDetector", logicArray, false, ix*3 + jx, true);
+            }
+        }
+    };
 
     G4RotationMatrix* rot = new G4RotationMatrix();
     G4RotationMatrix* rot_neg = new G4RotationMatrix();
-    double angle = 10.*deg;
+    double angle = 45.*deg;
     rot->rotateY(angle);
     rot_neg->rotateY(-angle);
 

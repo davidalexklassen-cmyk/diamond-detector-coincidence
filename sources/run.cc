@@ -18,7 +18,7 @@ RunAction::RunAction()
     man->CreateNtuple("scatter","theta");
     man->CreateNtupleIColumn("EventID");
     man->CreateNtupleDColumn("theta_deg");
-    man->CreateNtupleDColumn("E_MeV");    
+    man->CreateNtupleDColumn("E_MeV");      
     man->FinishNtuple(1);
 }
 

@@ -6,6 +6,8 @@
 #include "G4LogicalVolume.hh"   // detector volume
 #include "G4PVPlacement.hh"     // placing 3d env
 #include "G4box.hh"             // shape of world
+#include "G4Tubs.hh"            // Pillshape
+#include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
 #include "G4NistManager.hh"     // material database
 #include "G4SystemOfUnits.hh"   // SI Units
