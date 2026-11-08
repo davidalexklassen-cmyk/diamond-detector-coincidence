@@ -21,7 +21,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
     G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3); //molecular mass from wikipedia -> doublecheck
-    G4Box* solidDetector = new G4Box("solidDetector", 2.15*mm, 2.15*mm, 25.*um);
+    G4Box* solidDetector = new G4Box("solidDetector", 2.15*mm, 2.15*mm, 250.*um);
     logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
 
     G4Material* scatterMatHolder = nist->FindOrBuildMaterial("G4_Al");
@@ -38,11 +38,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     double foil_hthickness = 0.1*mm; // need to add real, half thickness
     G4Material* scatterMat = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
+
     G4VSolid* solidFoilBody = new G4Box("solidFoilBody", 3.*mm, 5.*mm, foil_hthickness); 
     G4VSolid* solidFoilTop = new G4Tubs("solidFoilTop", 0, 3.*mm, foil_hthickness, 0.*deg, 180. * deg);
     G4VSolid* solidFoilBottom = new G4Tubs("solidFoilBottom", 0, 3.*mm, 0.1*mm, 0.*deg, 180. * deg);
     G4RotationMatrix* mirrorFoilBottom = new G4RotationMatrix();
     mirrorFoilBottom->rotateZ(180*deg);
+
     G4UnionSolid* pillFoiltop = new G4UnionSolid("union_1", solidFoilBody, solidFoilTop, nullptr, G4ThreeVector(0., 5.*mm, 0.));
     G4UnionSolid* pillFoil = new G4UnionSolid("union_2", pillFoiltop, solidFoilBottom, mirrorFoilBottom, G4ThreeVector(0., -5.*mm, 0.));
     G4LogicalVolume* logicPillFoil = new G4LogicalVolume(pillFoil, scatterMat, "logicPillFoil");
@@ -112,9 +114,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     rot->rotateY(angle);
     rot_neg->rotateY(-angle);
 
-    for(int array = 0; array < 2; array++)
+    for(int array = 0; array < 1; array++)
     {
-        double radius = -30.*cm - array * 1.*cm;
+        double radius = -15.03*cm - array * 1.*cm;
         double x_pos_Array = -radius * sin(angle);
         double y_pos_Array = 0.;
         double z_pos_Array = radius * cos(angle);

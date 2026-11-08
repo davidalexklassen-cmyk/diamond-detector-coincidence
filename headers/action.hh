@@ -8,11 +8,11 @@
 
 class ActionInitialization : public G4VUserActionInitialization
 {
-public:
-    ActionInitialization();
-    ~ActionInitialization();
+    public:
+        ActionInitialization();
+        ~ActionInitialization();
 
-    void BuildForMaster() const override;
-    void Build() const override;
+        void BuildForMaster() const override;
+        void Build() const override;
 };
 #endif

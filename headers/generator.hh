@@ -9,13 +9,13 @@
 
 class PrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
-public:
-    PrimaryGenerator();
-    ~PrimaryGenerator();
+    public:
+        PrimaryGenerator();
+        ~PrimaryGenerator();
 
-    void GeneratePrimaries(G4Event* event) override;
+        void GeneratePrimaries(G4Event* event) override;
 
-private:
-    G4ParticleGun* fParticleGun;
+    private:
+        G4ParticleGun* fParticleGun;
 };
 #endif

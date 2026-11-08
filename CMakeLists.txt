@@ -13,6 +13,7 @@ if(APPLE)
   set(EXPAT_LIBRARY $ENV{CONDA_PREFIX}/lib/libexpat.dylib)
 endif()
 
+add_compile_definitions(PROJECT_DATA_DIR="${PROJECT_SOURCE_DIR}/data")
 find_package(Geant4 REQUIRED ui_all vis_all)
 
 include(${Geant4_USE_FILE})
@@ -25,3 +26,6 @@ add_executable(sim ${sources} ${headers})
 target_link_libraries(sim ${Geant4_LIBRARIES})
 
 add_custom_target(sc_cvd_coincidence DEPENDS sim)
+
+add_executable(ppKinematicTest ${PROJECT_SOURCE_DIR}/validation/ppKinematicTest.cc ${PROJECT_SOURCE_DIR}/sources/ppkinematics.cc)
+target_link_libraries(ppKinematicTest ${Geant4_LIBRARIES})

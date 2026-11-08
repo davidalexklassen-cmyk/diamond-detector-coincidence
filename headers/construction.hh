@@ -15,14 +15,14 @@
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
-public:
-    DetectorConstruction();
-    ~DetectorConstruction();
+    public:
+        DetectorConstruction();
+        ~DetectorConstruction();
 
-    G4VPhysicalVolume* Construct() override;
+        G4VPhysicalVolume* Construct() override;
 
-private:
-    G4LogicalVolume* logicDetector = nullptr;
-    void ConstructSDandField() override;
+    private:
+        G4LogicalVolume* logicDetector = nullptr;
+        void ConstructSDandField() override;
 };
 #endif

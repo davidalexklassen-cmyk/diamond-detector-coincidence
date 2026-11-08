@@ -10,8 +10,8 @@
 
 class RutherfordAction : public G4UserSteppingAction
 {
-public:
-    void UserSteppingAction(const G4Step* step) override;
+    public:
+        void UserSteppingAction(const G4Step* step) override;
 };
 
 #endif
