@@ -20,10 +20,9 @@ class PPelasticModel : public G4VEmModel
         explicit PPelasticModel(G4double thetaMin_CM);
 
         void Initialise(const G4ParticleDefinition*, const G4DataVector&) override;
-
         G4double ComputeCrossSectionPerAtom(const G4ParticleDefinition*, G4double kinEnergy, G4double Z, G4double A, G4double cut, G4double emax) override;
-
         void SampleSecondaries(std::vector<G4DynamicParticle*>*, const G4MaterialCutsCouple*, const G4DynamicParticle*, G4double cut, G4double) override;
+
     private:
         G4double fThetaMin;
         std::unique_ptr<PPxsection> fxs;

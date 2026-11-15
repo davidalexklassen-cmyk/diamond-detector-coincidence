@@ -5,6 +5,7 @@ PhysicsList::PhysicsList()
     RegisterPhysics(new G4EmStandardPhysicsSS());
     G4EmParameters* em = G4EmParameters::Instance();
     em->SetNuclearFormfactorType(fNoneNF);
+
 }
 
 PhysicsList::~PhysicsList()
@@ -17,4 +18,5 @@ void PhysicsList::ConstructProcess()
     for (size_t i = 0; i < procs->size(); ++i)
     if (auto* cs = dynamic_cast<G4CoulombScattering*>((*procs)[i]))
     cs->SetEmModel(new RemoveHydrogenCoulomb);
+    G4Proton::Proton()->GetProcessManager()->AddDiscreteProcess(new PPelasticProcess(0.25*deg));
 }

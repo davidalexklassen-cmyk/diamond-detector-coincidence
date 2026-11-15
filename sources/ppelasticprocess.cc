@@ -44,7 +44,10 @@ PPelasticProcess::PPelasticProcess(G4double thetaMin_CM) : G4VEmProcess("ppElast
     SetSecondaryParticle(G4Proton::Proton());
     SetProcessSubType(fCoulombScattering);
     SetCrossSectionType(fEmNoIntegral);
-    SetBuildTableFlag(false);
+    SetBuildTableFlag(true);
+    SetMinKinEnergy(MinKinEnergy());
+    SetMaxKinEnergy(MaxKinEnergy());
+    SetLambdaBinning(1000);
 }
 
 G4bool PPelasticProcess::IsApplicable(const G4ParticleDefinition& p)

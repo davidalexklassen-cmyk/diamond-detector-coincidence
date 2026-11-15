@@ -11,6 +11,7 @@
 #include "G4CoulombScattering.hh"
 #include "removehydrocoulomb.hh"
 #include "G4Proton.hh"
+#include "ppelasticprocess.hh"
 
 
 class PhysicsList : public G4VModularPhysicsList
