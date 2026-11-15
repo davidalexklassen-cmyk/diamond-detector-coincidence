@@ -19,9 +19,10 @@ int main(int argc, char** argv)
     runManager->SetUserInitialization(new PhysicsList());
     runManager->SetUserInitialization(new ActionInitialization());
     runManager->Initialize();
+    runManager->BeamOn(30'000'000);
 
+    /*
     G4UIExecutive* ui = new G4UIExecutive(argc, argv);
-
     G4VisManager* visManager = new G4VisExecutive();
     visManager->Initialize();
 
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
     UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
 
     ui->SessionStart();
+    */
 
     return 0;
 }

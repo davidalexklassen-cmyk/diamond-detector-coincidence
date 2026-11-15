@@ -8,6 +8,10 @@ DetectorConstruction::~DetectorConstruction()
 
 G4VPhysicalVolume* DetectorConstruction::Construct()
 {
+    double pcb_hlength = 15. * mm;
+    double pcb_hwidth = 15. * mm;
+    double foil_hthickness = 0.05*mm; // need to add real, half thickness
+
     G4NistManager* nist = G4NistManager::Instance();
     
     G4Material* worldMat = nist->FindOrBuildMaterial("G4_Galactic");
@@ -15,8 +19,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
-    double pcb_hlength = 15. * mm;
-    double pcb_hwidth = 15. * mm;
     G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, 500*um);
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
@@ -35,13 +37,11 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     G4LogicalVolume* logicScatter = new G4LogicalVolume(solidScatter, scatterMatHolder, "logicScatterHolder");
     G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicScatter, "Holder", logicWorld, false, 0, true);
-
-    double foil_hthickness = 0.1*mm; // need to add real, half thickness
     G4Material* scatterMat = nist->FindOrBuildMaterial("G4_POLYETHYLENE");
 
     G4VSolid* solidFoilBody = new G4Box("solidFoilBody", 3.*mm, 5.*mm, foil_hthickness); 
     G4VSolid* solidFoilTop = new G4Tubs("solidFoilTop", 0, 3.*mm, foil_hthickness, 0.*deg, 180. * deg);
-    G4VSolid* solidFoilBottom = new G4Tubs("solidFoilBottom", 0, 3.*mm, 0.1*mm, 0.*deg, 180. * deg);
+    G4VSolid* solidFoilBottom = new G4Tubs("solidFoilBottom", 0, 3.*mm, foil_hthickness, 0.*deg, 180. * deg);
     G4RotationMatrix* mirrorFoilBottom = new G4RotationMatrix();
     mirrorFoilBottom->rotateZ(180*deg);
 
@@ -50,23 +50,22 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicPillFoil = new G4LogicalVolume(pillFoil, scatterMat, "logicPillFoil");
     G4VPhysicalVolume* physFoil = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicPillFoil, "Foil", logicWorld, false, 0, true);
 
-    bool type = true;
+    bool type = false; // if new pre-amp works 3x3 <=> true, if not 5x5 <=> false
 
     G4Material* pcbMat = nist->FindOrBuildMaterial("G4_BAKELITE");
-
-    double dod_distance_x = 5.5 * mm; //detector on detector distance centre to centre
-    double dod_distance_y = 5.5 * mm;
-
-    /*Detector builds up ->
-    0 1 2 3 4
-    5 6 7 8 9
-    */
 
     G4Box* solidHole = new G4Box("solidHole", 2.15*mm, 2.15*mm, 1*mm);
     G4VSolid* solidPCB = new G4Box("solidPCB", pcb_hlength, pcb_hwidth, 0.5*mm);
 
+        /*Detector builds up ->
+        0 1 2 3 4
+        5 6 7 8 9
+        */
+
     if (type == false)
     {
+        double dod_distance_x = 5.7 * mm; //detector on detector distance centre to centre
+        double dod_distance_y = 5.7 * mm;
         for (int ix = 0; ix <5; ix++)
         {
             for(int jx = 0; jx <5; jx++)
@@ -88,6 +87,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     }
     else if (type == true)
     {
+        double dod_distance_x = 6.1 * mm; //detector on detector distance centre to centre
+        double dod_distance_y = 6.1 * mm;
         for (int ix = 0; ix <3; ix++)
         {
             for(int jx = 0; jx <3; jx++)
@@ -116,7 +117,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     for(int array = 0; array < 1; array++)
     {
-        double radius = -15.03*cm - array * 1.*cm;
+        double radius = -30*cm - array * 1.*cm;
         double x_pos_Array = -radius * sin(angle);
         double y_pos_Array = 0.;
         double z_pos_Array = radius * cos(angle);
