@@ -3,6 +3,7 @@
 
 #include "G4UserRunAction.hh"
 #include "G4AnalysisManager.hh"
+#include "config.hh"
 
 class RunAction : public G4UserRunAction
 {

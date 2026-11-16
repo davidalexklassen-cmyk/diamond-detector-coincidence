@@ -1,3 +1,5 @@
+// ./sim DETECTOR_TYPE_(3|5) G4_FOILMAT_NIST, FOIL_THICKNESS_um, 
+
 #include <iostream>
 
 
@@ -9,9 +11,20 @@
 #include "construction.hh"
 #include "physics.hh"
 #include "action.hh"
+#include "config.hh"
 
 int main(int argc, char** argv)
 {
+    if(argc != 6)
+    {
+        G4cerr << "Insufficient arguments: ./sim <3_or_5> <foil_material> <foil_thickness_um> <n_events> <output_name.root>" << G4endl;
+        return 1;
+    }
+    cfg::pcb_3x3 = std::string(argv[1]) == "3";
+    cfg::foilMat = argv[2];
+    cfg::foilThickness = std::stod(argv[3]) * um;
+    cfg::filename = argv[5];
+    
     G4MTRunManager* runManager = new G4MTRunManager();
     runManager->SetNumberOfThreads(10);
 
@@ -19,7 +32,7 @@ int main(int argc, char** argv)
     runManager->SetUserInitialization(new PhysicsList());
     runManager->SetUserInitialization(new ActionInitialization());
     runManager->Initialize();
-    runManager->BeamOn(30'000'000);
+    runManager->BeamOn(std::stod(argv[4]));
 
     /*
     G4UIExecutive* ui = new G4UIExecutive(argc, argv);
@@ -37,6 +50,6 @@ int main(int argc, char** argv)
 
     ui->SessionStart();
     */
-
+    delete runManager;
     return 0;
 }

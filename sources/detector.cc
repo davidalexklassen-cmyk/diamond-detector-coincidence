@@ -21,18 +21,25 @@ G4bool SensitiveDetector::ProcessHits(G4Step* astep, G4TouchableHistory* R0hist)
     G4ThreeVector posDetector = physVol->GetTranslation();
     G4double edepos = astep->GetTotalEnergyDeposit();
 
-    G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-
-    G4AnalysisManager* man = G4AnalysisManager::Instance();
-    
-    man->FillNtupleIColumn(0, 0, evt);
-    man->FillNtupleIColumn(0, 1, arrayID);
-    man->FillNtupleIColumn(0, 2, detectorID);
-    man->FillNtupleDColumn(0, 3, edepos / keV);
-    man->FillNtupleDColumn(0, 4, posProton.x());
-    man->FillNtupleDColumn(0, 5, posProton.y());
-    man->FillNtupleDColumn(0, 6, posProton.z());
-    man->AddNtupleRow(0);
+    if (edepos <= 0.) return false;
+    Hit& hit = fHits[{arrayID, detectorID}];
+    if (hit.edep == 0.) hit.pos = posProton;
+    hit.edep += edepos;
 
     return true;
+}
+
+void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
+{
+    G4AnalysisManager* man = G4AnalysisManager::Instance();
+    G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    for (const auto& [id, hit] : fHits)
+    {
+        man->FillNtupleIColumn(0, 0, evt);
+        man->FillNtupleIColumn(0, 1, id.first);
+        man->FillNtupleIColumn(0, 2, id.second);
+        man->FillNtupleDColumn(0, 3, hit.edep / keV);
+        man->AddNtupleRow(0);
+    }
+    fHits.clear();
 }
