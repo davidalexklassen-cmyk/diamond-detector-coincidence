@@ -6,6 +6,9 @@
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
 #include "G4AnalysisManager.hh"
+#include "G4ThreeVector.hh"
+#include <map>
+#include <utility>
 
 class SensitiveDetector : public G4VSensitiveDetector
 {
@@ -15,6 +18,9 @@ class SensitiveDetector : public G4VSensitiveDetector
 
     private:
         G4bool ProcessHits(G4Step*, G4TouchableHistory*) override;
+        void EndOfEvent(G4HCofThisEvent*) override;
+        struct Hit {G4double edep = 0.; G4ThreeVector pos;};
+        std::map<std::pair<G4int,G4int>, Hit> fHits;
 };
 
 #endif

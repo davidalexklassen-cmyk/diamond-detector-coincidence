@@ -43,10 +43,10 @@ PPelasticProcess::PPelasticProcess(G4double thetaMin_CM) : G4VEmProcess("ppElast
 {
     SetSecondaryParticle(G4Proton::Proton());
     SetProcessSubType(fCoulombScattering);
-    SetCrossSectionType(fEmNoIntegral);
+    SetCrossSectionType(fEmDecreasing);
     SetBuildTableFlag(true);
-    SetMinKinEnergy(MinKinEnergy());
-    SetMaxKinEnergy(MaxKinEnergy());
+    SetMinKinEnergy(PPxsection::MinEnergy());
+    SetMaxKinEnergy(PPxsection::MaxEnergy());
     SetLambdaBinning(1000);
 }
 

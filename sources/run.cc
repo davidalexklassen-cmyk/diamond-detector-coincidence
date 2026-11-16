@@ -4,17 +4,16 @@ RunAction::RunAction()
 {
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     
+    //Sensitive Detector
     man->SetNtupleMerging(true); 
     man->CreateNtuple("DetectorData","Detector Hits");
     man->CreateNtupleIColumn("EventID");
     man->CreateNtupleIColumn("Array");
     man->CreateNtupleIColumn("Detector");
     man->CreateNtupleDColumn("Energyloss");
-    man->CreateNtupleDColumn("X");
-    man->CreateNtupleDColumn("Y");
-    man->CreateNtupleDColumn("Z");
     man->FinishNtuple(0);
 
+    //rutherford validation
     man->CreateNtuple("scatter","theta");
     man->CreateNtupleIColumn("EventID");
     man->CreateNtupleDColumn("theta_deg");
@@ -28,7 +27,7 @@ RunAction::~RunAction()
 void RunAction::BeginOfRunAction(const G4Run*)
 {
     G4AnalysisManager* man = G4AnalysisManager::Instance();
-    man->OpenFile("output.root");
+    man->OpenFile(cfg::filename);
 }
 
 void RunAction::EndOfRunAction(const G4Run*)

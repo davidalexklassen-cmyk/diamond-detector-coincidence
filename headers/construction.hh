@@ -11,7 +11,9 @@
 #include "G4SubtractionSolid.hh"
 #include "G4NistManager.hh"     // material database
 #include "G4SystemOfUnits.hh"   // SI Units
+#include "G4SDManager.hh"
 #include "detector.hh"
+#include "config.hh"
 
 class DetectorConstruction : public G4VUserDetectorConstruction
 {
