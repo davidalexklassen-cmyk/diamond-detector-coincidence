@@ -16,5 +16,5 @@ void ActionInitialization::Build() const
     PrimaryGenerator* generator = new PrimaryGenerator();
     SetUserAction(generator);
     SetUserAction(new RunAction());
-    SetUserAction(new RutherfordAction());
+    //SetUserAction(new RutherfordAction());
 }

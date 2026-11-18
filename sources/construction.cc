@@ -10,8 +10,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
     double pcb_hlength = 15. * mm;
     double pcb_hwidth = 15. * mm;
-    double distance_det_scatter = 15.5*cm;
-    double foil_hthickness = 0.5 * cfg::foilThickness; // need to add real, half thickness
+    double foil_hthickness = 0.5 * cfg::foilThickness;
 
     G4NistManager* nist = G4NistManager::Instance();
     
@@ -63,7 +62,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     if (cfg::pcb_3x3 == false)
     {
-        distance_det_scatter = 15.5*cm;
         double dod_distance_x = 5.7 * mm; //detector on detector distance centre to centre
         double dod_distance_y = 5.7 * mm;
         for (int ix = 0; ix <5; ix++)
@@ -87,7 +85,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     }
     else if (cfg::pcb_3x3 == true)
     {
-        distance_det_scatter = 9.5*cm;
         double dod_distance_x = 6.1 * mm; //detector on detector distance centre to centre
         double dod_distance_y = 6.1 * mm;
         for (int ix = 0; ix <3; ix++)
@@ -118,13 +115,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     for(int array = 0; array < 1; array++)
     {
-        double radius = -distance_det_scatter - array * 1.*cm;
+        double radius = -cfg::radius_L - array * 1.*cm;
         double x_pos_Array = -radius * sin(angle);
         double y_pos_Array = 0.;
         double z_pos_Array = radius * cos(angle);
 
-        new G4PVPlacement(rot, G4ThreeVector(x_pos_Array, y_pos_Array, z_pos_Array), logicArray, "physArray", logicWorld, false, array + 2, true);
         new G4PVPlacement(rot_neg, G4ThreeVector(-x_pos_Array, y_pos_Array, z_pos_Array), logicArray, "physArray", logicWorld, false, array, true);
+
+        radius = -cfg::radius_R - array * 1.*cm;
+        x_pos_Array = -radius * sin(angle);
+        y_pos_Array = 0.;
+        z_pos_Array = radius * cos(angle);
+
+        new G4PVPlacement(rot, G4ThreeVector(x_pos_Array, y_pos_Array, z_pos_Array), logicArray, "physArray", logicWorld, false, array + 2, true);
     }
     return physWorld;
 }

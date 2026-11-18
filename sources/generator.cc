@@ -12,6 +12,14 @@ PrimaryGenerator::~PrimaryGenerator()
 
 void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
 {
+    const G4long n = ++cfg::eventsStarted;
+    const G4long step = std::max<G4long>(cfg::nEvents / 10, 1);
+    if (n % step == 0)
+    {
+        const double s = std::chrono::duration<double>(std::chrono::steady_clock::now() - cfg::tStart).count();
+        G4cout << "Progress:" << 100 * n / cfg::nEvents << "% (" << n << "/" << cfg::nEvents << ") " << s << "s since start. About " << s * (cfg::nEvents - n) / n << "till done." << G4endl;
+    }
+
     G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
     G4String particleName = "proton";
     G4ParticleDefinition* particle = particleTable->FindParticle(particleName);

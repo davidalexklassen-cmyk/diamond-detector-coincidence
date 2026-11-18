@@ -4,7 +4,7 @@
 #include "G4VUserActionInitialization.hh"
 #include "generator.hh"
 #include "run.hh"
-#include "rutherford.hh"
+//#include "rutherford.hh"
 
 class ActionInitialization : public G4VUserActionInitialization
 {
