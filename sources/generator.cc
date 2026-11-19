@@ -24,12 +24,15 @@ void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
     G4String particleName = "proton";
     G4ParticleDefinition* particle = particleTable->FindParticle(particleName);
 
-    G4ThreeVector pos(0.,0.,50.*cm);
+    const G4double beamSpot = 1. * mm;
+    G4ThreeVector pos(G4RandGauss::shoot(0.,beamSpot) * cfg::scalar_x, G4RandGauss::shoot(0.,beamSpot) * cfg::scalar_y,50.*cm);
     G4ThreeVector mom(0.,0.,-1.);
 
     fParticleGun->SetParticlePosition(pos);
     fParticleGun->SetParticleMomentumDirection(mom);
-    fParticleGun->SetParticleEnergy(6.*MeV);
+
+    const G4double eSpread = 3. * keV;
+    fParticleGun->SetParticleEnergy(G4RandGauss::shoot(6. * MeV, eSpread));
     fParticleGun->SetParticleDefinition(particle);
 
     fParticleGun->GeneratePrimaryVertex(anEvent);

@@ -33,8 +33,16 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
 {
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+
+    const G4double FWHM = 20. * keV;
+    const G4double sigma = FWHM / 2.355;
+    const G4double threshold = 50. * keV;
+
     for (const auto& [id, hit] : fHits)
     {
+        const G4double e = G4RandGauss::shoot(hit.edep, sigma);
+        if (e < threshold) continue;
+
         man->FillNtupleIColumn(0, 0, evt);
         man->FillNtupleIColumn(0, 1, id.first);
         man->FillNtupleIColumn(0, 2, id.second);

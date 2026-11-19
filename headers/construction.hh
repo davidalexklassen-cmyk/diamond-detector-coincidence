@@ -5,7 +5,7 @@
 #include "G4VPhysicalVolume.hh" // important for world boundary and volume
 #include "G4LogicalVolume.hh"   // detector volume
 #include "G4PVPlacement.hh"     // placing 3d env
-#include "G4box.hh"             // shape of world
+#include "G4Box.hh"             // shape of world
 #include "G4Tubs.hh"            // Pillshape
 #include "G4UnionSolid.hh"
 #include "G4SubtractionSolid.hh"
