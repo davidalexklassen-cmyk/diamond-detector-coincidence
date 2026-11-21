@@ -57,7 +57,6 @@ int main(int argc, char** argv)
 
     ui->SessionStart();
     */
-    
     delete runManager;
     return 0;
 }

@@ -10,12 +10,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 {
     double pcb_hlength = 0.5 * cfg::pcb_length;
     double pcb_hwidth = 0.5 * cfg::pcb_width;
+    double pcb_hthickness = 0.5 * cfg::pcb_thickness;
+
     double foil_hthickness = 0.5 * cfg::foilThickness;
+    double foil_hlength = 0.5 * cfg::foil_length;
+    
     double hdepth_target = 0.5 * cfg::depth_target;
     double hwidth_target = 0.5 * cfg::width_target;
     double hlength_target = 0.5 * cfg::length_target;
-    double foil_hwidth = 0.5 * cfg::foil_width;
     double hcenter_foil = 0.5 * (cfg::foil_width - cfg::foil_length);
+
+    double hactive_diamond_detector_width = 0.5 * cfg::active_diamond_detector_width;
+    double hactive_diamond_detector_length = 0.5 * cfg::active_diamond_detector_length;
+    double hactive_diamond_detector_thickness = 0.5 * cfg::active_diamond_detector_thickness;
 
     G4NistManager* nist = G4NistManager::Instance();
     
@@ -24,17 +31,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld, worldMat, "logicWorld");
     G4VPhysicalVolume* physWorld = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicWorld, "physWorld", 0, false, 0, true);
 
-    G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, 500.*um);
+    G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, pcb_hthickness);
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
     G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3); //molecular mass from wikipedia -> doublecheck
-    G4Box* solidDetector = new G4Box("solidDetector", 2.15*mm, 2.15*mm, 250.*um);
+    G4Box* solidDetector = new G4Box("solidDetector", hactive_diamond_detector_width, hactive_diamond_detector_length,hactive_diamond_detector_thickness);
     logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
 
     G4Material* scatterMatHolder = nist->FindOrBuildMaterial("G4_Al");
-    G4VSolid* solidScatter = new G4Box("solidScatter", hlength_target, hwidth_target, hdepth_target);
-    G4Tubs* solidZylHole = new G4Tubs("solidZylHole", 0, foil_hwidth, cfg::depth_target, 0.*deg, 360. * deg);
-    G4Box* solidHoleScatter = new G4Box("solidHoleScatter", hcenter_foil, foil_hwidth, cfg::depth_target);
+    G4VSolid* solidScatter = new G4Box("solidScatter", hwidth_target, hlength_target, hdepth_target);
+    G4Tubs* solidZylHole = new G4Tubs("solidZylHole", 0, foil_hlength, cfg::depth_target, 0.*deg, 360. * deg);
+    G4Box* solidHoleScatter = new G4Box("solidHoleScatter", hcenter_foil, foil_hlength, cfg::depth_target);
 
     solidScatter = new G4SubtractionSolid("scatter_hole_1", solidScatter, solidZylHole, nullptr, G4ThreeVector(hcenter_foil, 0., 0.));
     solidScatter = new G4SubtractionSolid("scatter_hole_2", solidScatter, solidZylHole, nullptr, G4ThreeVector(-hcenter_foil, 0., 0.));
@@ -44,9 +51,9 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4VPhysicalVolume* physScatter = new G4PVPlacement(0, G4ThreeVector(0., 0., hdepth_target), logicScatter, "Holder", logicWorld, false, 0, true);
     G4Material* scatterMat = nist->FindOrBuildMaterial(cfg::foilMat);
 
-    G4VSolid* solidFoilBody = new G4Box("solidFoilBody", hcenter_foil, foil_hwidth, foil_hthickness); 
-    G4VSolid* solidFoilRight = new G4Tubs("solidFoilRight", 0, foil_hwidth, foil_hthickness, 270.*deg, 180. * deg);
-    G4VSolid* solidFoilLeft = new G4Tubs("solidFoilLeft", 0, foil_hwidth, foil_hthickness, 90.*deg, 180. * deg);
+    G4VSolid* solidFoilBody = new G4Box("solidFoilBody", hcenter_foil, foil_hlength, foil_hthickness); 
+    G4VSolid* solidFoilRight = new G4Tubs("solidFoilRight", 0, foil_hlength, foil_hthickness, 270.*deg, 180. * deg);
+    G4VSolid* solidFoilLeft = new G4Tubs("solidFoilLeft", 0, foil_hlength, foil_hthickness, 90.*deg, 180. * deg);
 
     G4UnionSolid* pillFoilLU = new G4UnionSolid("union_1", solidFoilBody, solidFoilRight, nullptr, G4ThreeVector(hcenter_foil, 0., 0.));
     G4UnionSolid* pillFoil = new G4UnionSolid("union_2", pillFoilLU, solidFoilLeft, nullptr, G4ThreeVector(-hcenter_foil, 0., 0.));
@@ -55,8 +62,8 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     G4Material* pcbMat = nist->FindOrBuildMaterial("G4_BAKELITE"); // replace
 
-    G4Box* solidHole = new G4Box("solidHole", 2.15*mm, 2.15*mm, 1*mm);
-    G4VSolid* solidPCB = new G4Box("solidPCB", pcb_hlength, pcb_hwidth, 0.5*mm);
+    G4Box* solidHole = new G4Box("solidHole", hactive_diamond_detector_width, hactive_diamond_detector_length, hactive_diamond_detector_thickness);
+    G4VSolid* solidPCB = new G4Box("solidPCB", pcb_hlength, pcb_hwidth, pcb_hthickness);
 
         /*Detector builds up ->
         0 1 2 3 4
@@ -116,7 +123,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     rot->rotateY(angle);
     rot_neg->rotateY(-angle);
 
-    for(int array = 0; array < 1; array++)
+    for(int array = 0; array < cfg::layer_n_stacked; array++)
     {
         double radius = -cfg::radius_L - array * 1.*cm;
         double x_pos_Array = -radius * sin(angle);
