@@ -20,8 +20,9 @@ class SensitiveDetector : public G4VSensitiveDetector
     private:
         G4bool ProcessHits(G4Step*, G4TouchableHistory*) override;
         void EndOfEvent(G4HCofThisEvent*) override;
-        struct Hit {G4double edep = 0.; G4ThreeVector pos;};
+        struct Hit {G4double edep = 0.; G4double weight = 1.; G4ThreeVector pos;};
         std::map<std::pair<G4int,G4int>, Hit> fHits;
+        
 };
 
 #endif

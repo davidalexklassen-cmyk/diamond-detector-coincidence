@@ -25,6 +25,7 @@ G4bool SensitiveDetector::ProcessHits(G4Step* astep, G4TouchableHistory* R0hist)
     Hit& hit = fHits[{arrayID, detectorID}];
     if (hit.edep == 0.) hit.pos = posProton;
     hit.edep += edepos;
+    hit.weight = astep->GetTrack()->GetWeight();
 
     return true;
 }
@@ -34,9 +35,9 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
-    const G4double FWHM = 20. * keV;
+    const G4double FWHM = 96. * keV;
     const G4double sigma = FWHM / 2.355;
-    const G4double threshold = 50. * keV;
+    const G4double threshold = 10. * keV;
 
     for (const auto& [id, hit] : fHits)
     {
@@ -46,7 +47,8 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
         man->FillNtupleIColumn(0, 0, evt);
         man->FillNtupleIColumn(0, 1, id.first);
         man->FillNtupleIColumn(0, 2, id.second);
-        man->FillNtupleDColumn(0, 3, hit.edep / MeV);
+        man->FillNtupleDColumn(0, 3, e / MeV);
+        man->FillNtupleDColumn(0, 4, hit.weight);
         man->AddNtupleRow(0);
     }
     fHits.clear();

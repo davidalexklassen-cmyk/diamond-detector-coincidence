@@ -11,6 +11,7 @@ RunAction::RunAction()
     man->CreateNtupleIColumn("Array");
     man->CreateNtupleIColumn("Detector");
     man->CreateNtupleDColumn("Edep");
+    man->CreateNtupleDColumn("Weight");
     man->FinishNtuple(0);
 
     /*

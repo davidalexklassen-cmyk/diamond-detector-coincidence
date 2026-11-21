@@ -7,7 +7,14 @@
 
 namespace cfg
 {
+    //biasing
+    inline G4bool bias_active = false;
+    inline G4double thetaMin = 38 * deg;
+    inline G4double thetaMax = 52 * deg;
+    inline G4double dPhi = 6 * deg;
+
     // Parameters to start simulation
+    inline G4double beamEnergy = 6. * MeV;
     inline G4long nEvents = 0;
     inline bool pcb_3x3 = false; //false = 5x5 pcb
     inline G4String foilMat = "G4_POLYETHYLENE";

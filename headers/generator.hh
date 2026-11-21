@@ -8,6 +8,10 @@
 #include "G4ParticleTable.hh"
 #include "config.hh"
 #include "Randomize.hh"
+#include "ppxsection.hh"
+#include <memory>
+#include "G4Event.hh"
+#include "biasing.hh"
 
 class PrimaryGenerator : public G4VUserPrimaryGeneratorAction
 {
@@ -19,5 +23,6 @@ class PrimaryGenerator : public G4VUserPrimaryGeneratorAction
 
     private:
         G4ParticleGun* fParticleGun;
+        std::unique_ptr<PPxsection> fpp;
 };
 #endif

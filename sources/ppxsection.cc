@@ -24,6 +24,7 @@ PPxsection::PPxsection(const std::string& phaseShiftFile, double thetaMin_CM)
     {
         if(line.empty()) continue;
         std::istringstream ss(line);
+        
         if(line[0] == '#')
         {
             std::string hash, name;
@@ -33,6 +34,7 @@ PPxsection::PPxsection(const std::string& phaseShiftFile, double thetaMin_CM)
             continue;
         }
         double t,d;
+
         if(w >= 0 && (ss >> t >> d))
         {
             E[w].push_back(t*CLHEP::MeV);
