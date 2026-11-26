@@ -35,9 +35,8 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
     G4AnalysisManager* man = G4AnalysisManager::Instance();
     G4int evt = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
 
-    const G4double FWHM = 96. * keV;
-    const G4double sigma = FWHM / 2.355;
-    const G4double threshold = 10. * keV;
+    const G4double sigma = cfg::detector_resolution_FWHM / 2.355;
+    const G4double threshold = 200. * keV;
 
     for (const auto& [id, hit] : fHits)
     {

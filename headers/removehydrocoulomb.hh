@@ -11,7 +11,6 @@ class RemoveHydrogenCoulomb : public G4eCoulombScatteringModel
         {
             if (Z < 1.1) return 0.;
             return G4eCoulombScatteringModel::ComputeCrossSectionPerAtom(p, E, Z, A, cut, emax);
-
         }
 };
 

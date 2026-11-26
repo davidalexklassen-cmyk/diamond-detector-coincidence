@@ -34,7 +34,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4Box* solidArray = new G4Box("solidArray", pcb_hlength, pcb_hwidth, pcb_hthickness);
     G4LogicalVolume* logicArray = new G4LogicalVolume(solidArray, worldMat, "logicArray");
 
-    G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3); //molecular mass from wikipedia -> doublecheck
+    G4Material* detectorMat = new G4Material("sc_diamond", 6., 12.01*g/mole, 3.515*g/cm3);
     G4Box* solidDetector = new G4Box("solidDetector", hactive_diamond_detector_width, hactive_diamond_detector_length,hactive_diamond_detector_thickness);
     logicDetector = new G4LogicalVolume(solidDetector, detectorMat, "logicDetector");
 
@@ -60,7 +60,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     G4LogicalVolume* logicPillFoil = new G4LogicalVolume(pillFoil, scatterMat, "logicPillFoil");
     G4VPhysicalVolume* physFoil = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logicPillFoil, "Foil", logicWorld, false, 0, true);
 
-    G4Material* pcbMat = nist->FindOrBuildMaterial("G4_BAKELITE"); // replace
+    G4Material* pcbMat = new G4Material("FR4", 1.85 * g / cm3, 9);
+    pcbMat->AddElement(nist->FindOrBuildElement("O"), 0.33984);
+    pcbMat->AddElement(nist->FindOrBuildElement("C"), 0.25465);
+    pcbMat->AddElement(nist->FindOrBuildElement("Si"), 0.14009);
+    pcbMat->AddElement(nist->FindOrBuildElement("Ca"), 0.08726);
+    pcbMat->AddElement(nist->FindOrBuildElement("Br"), 0.07500);
+    pcbMat->AddElement(nist->FindOrBuildElement("Al"), 0.04112);
+    pcbMat->AddElement(nist->FindOrBuildElement("H"), 0.03170);
+    pcbMat->AddElement(nist->FindOrBuildElement("B"), 0.01724);
+    pcbMat->AddElement(nist->FindOrBuildElement("N"), 0.01310);
+
 
     G4Box* solidHole = new G4Box("solidHole", hactive_diamond_detector_width, hactive_diamond_detector_length, hactive_diamond_detector_thickness);
     G4VSolid* solidPCB = new G4Box("solidPCB", pcb_hlength, pcb_hwidth, pcb_hthickness);
@@ -117,27 +127,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
         }
     };
 
-    G4RotationMatrix* rot = new G4RotationMatrix();
-    G4RotationMatrix* rot_neg = new G4RotationMatrix();
-    double angle = 45.*deg;
-    rot->rotateY(angle);
-    rot_neg->rotateY(-angle);
-
-    for(int array = 0; array < cfg::layer_n_stacked; array++)
+    for (int k = 0; k < 2; ++k)
     {
-        double radius = -cfg::radius_L - array * 1.*cm;
-        double x_pos_Array = -radius * sin(angle);
-        double y_pos_Array = 0.;
-        double z_pos_Array = radius * cos(angle);
+        const G4double a = cfg::ArmAngle(k);
+        G4RotationMatrix* rot = new G4RotationMatrix();
+        rot->rotateY(a);
 
-        new G4PVPlacement(rot_neg, G4ThreeVector(-x_pos_Array, y_pos_Array, z_pos_Array), logicArray, "physArray", logicWorld, false, array, true);
-
-        radius = -cfg::radius_R - array * 1.*cm;
-        x_pos_Array = -radius * sin(angle);
-        y_pos_Array = 0.;
-        z_pos_Array = radius * cos(angle);
-
-        new G4PVPlacement(rot, G4ThreeVector(x_pos_Array, y_pos_Array, z_pos_Array), logicArray, "physArray", logicWorld, false, array + 2, true);
+        for (int layer = 0; layer < cfg::layer_n_stacked; ++layer)
+        {
+            const G4double r = cfg::ArmRadius(k) + layer * cfg::layer_spacing;
+            new G4PVPlacement(rot, G4ThreeVector(r * std::sin(a), 0., -r * std::cos(a)), logicArray, "physArray", logicWorld, false, 1 + k + 2 * layer, true);
+        }
     }
     return physWorld;
 }

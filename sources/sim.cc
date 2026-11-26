@@ -1,6 +1,4 @@
-// ./sim DETECTOR_TYPE_(3|5) G4_FOILMAT_NIST, FOIL_THICKNESS_um, 
-
-#include <chrono>
+ #include <chrono>
 #include <iostream>
 
 
@@ -13,22 +11,25 @@
 #include "physics.hh"
 #include "action.hh"
 #include "config.hh"
+#include "G4NistManager.hh"
 
 int main(int argc, char** argv)
 {
-    if(argc != 8)
+    if(argc != 9)
     {
-        G4cerr << "Insufficient arguments: ./sim <3_or_5> <foil_material> <foil_thickness_um> <n_events> <output_name.root> <biasing> <beamEnergy>" << G4endl;
+        G4cerr << "Insufficient arguments: ./sim <3_or_5> <foil_material> <area_density_mg/cm^2> <n_events> <output_name.root> <biasing> <beamEnergy> <detector_world_rot>" << G4endl;
         return 1;
     }
     cfg::pcb_3x3 = std::string(argv[1]) == "3";
     cfg::foilMat = argv[2];
-    cfg::foilThickness = std::stod(argv[3]) * um;
+    G4double density = G4NistManager::Instance()->FindOrBuildMaterial(argv[2])->GetDensity()/(mg/cm3);
+    cfg::foilThickness = std::stod(argv[3]) / density * cm;
     cfg::filename = argv[5];
     cfg::nEvents = (G4long)::std::stod(argv[4]);
     cfg::tStart = std::chrono::steady_clock::now();
     cfg::bias_active = std::string(argv[6]) == "ON";
     cfg::beamEnergy = std::stod(argv[7]) * MeV;
+    cfg::detector_rot_world =std::stod(argv[8]);
 
     G4cout << "Biasing:" << (cfg::bias_active ? "ON" : "OFF") << G4endl;
 

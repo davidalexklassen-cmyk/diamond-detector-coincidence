@@ -2,7 +2,7 @@
 
 namespace 
 {
-    constexpr double kMinE = 1. * CLHEP::keV;
+    constexpr double kMinE = 0.1 * CLHEP::MeV;
     constexpr double kMaxE = 50. * CLHEP::MeV;
     constexpr int kNW = 512;
     const std::string kChannels[5] = {"1S0", "1D2", "3P0", "3P1", "3P2"};
@@ -127,7 +127,31 @@ double PPxsection::Totalxs(double Tlab) const
 
 double PPxsection::SampleCosTheta_CM(double Tlab, CLHEP::HepRandomEngine* engine) const
 {
-    const std::vector<double> cdf = Cumulative(Tlab);
+    //const std::vector<double> cdf = Cumulative(Tlab); // this is the uncached version (12x slower)
+
+    //caching with bins of 100 keV and linear interpolation in every thread
+    // 
+    thread_local std::map<int, std::vector<double>> cache;
+
+    const double dE = 100. * CLHEP::keV;
+    const int k0 = int(Tlab / dE);
+    const double frac = Tlab / dE -k0;
+
+    for (int k :{k0, k0 + 1})
+        if (cache[k].empty())
+        {
+            cache[k] = Cumulative(std::max(k*dE, kMinE));
+            for (double& v : cache[k]) v/= cache[k].back();
+        }
+
+    const auto &lo = cache[k0];
+    const auto &hi = cache[k0 + 1];
+
+    std::vector<double> cdf(kNW);
+    for (int j = 0; j < kNW; ++j) 
+        cdf[j] = (1. - frac) * lo[j] + frac * hi[j];
+
+    //
     const double target = engine->flat() * cdf.back();
     const int j = std::clamp(int(std::upper_bound(cdf.begin(), cdf.end(), target) - cdf.begin()) - 1, 0, kNW - 2);
     const double g = (target - cdf[j]) / (cdf[j + 1] - cdf[j]);

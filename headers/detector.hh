@@ -8,6 +8,7 @@
 #include "G4AnalysisManager.hh"
 #include "G4ThreeVector.hh"
 #include "Randomize.hh"
+#include "config.hh"
 #include <map>
 #include <utility>
 

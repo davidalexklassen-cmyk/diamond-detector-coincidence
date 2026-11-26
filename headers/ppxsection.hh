@@ -1,5 +1,5 @@
-#ifndef CALLTABLE_HH
-#define CALLTABLE_HH
+#ifndef PPXSECTION_HH
+#define PPXSECTION_HH
 
 #include <string>
 #include <vector>
@@ -13,6 +13,7 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <map>
 
 class PPxsection
 {

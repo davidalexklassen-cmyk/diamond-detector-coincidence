@@ -22,6 +22,7 @@ RunAction::RunAction()
     man->CreateNtupleDColumn("E_MeV");      
     man->FinishNtuple(1);
     */
+    
 }
 
 RunAction::~RunAction()
@@ -30,7 +31,7 @@ RunAction::~RunAction()
 void RunAction::BeginOfRunAction(const G4Run*)
 {
     G4AnalysisManager* man = G4AnalysisManager::Instance();
-    man->OpenFile(cfg::filename);
+    man->OpenFile("runs/" + cfg::filename);
 }
 
 void RunAction::EndOfRunAction(const G4Run*)

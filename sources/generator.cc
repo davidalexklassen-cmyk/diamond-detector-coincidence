@@ -51,7 +51,6 @@ void PrimaryGenerator::GeneratePrimaries(G4Event *anEvent)
     fParticleGun->SetParticlePosition(pos);
 
     for (auto [dir, e] : {std::pair{s.dir1, s.E1}, std::pair{s.dir2, s.E2}})
-    
     {
         if (e <= 0.) continue;
         fParticleGun->SetParticleMomentumDirection(dir);
