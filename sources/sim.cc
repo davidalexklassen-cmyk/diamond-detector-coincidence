@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
 
     ui->SessionStart();
-    */
+    
     delete runManager;
     return 0;
 }
