@@ -53,6 +53,7 @@ Scattered ForceScattering(G4double E, const PPxsection& pp)
 
         const G4int n = (-c >= cLo && -c <= cHi) ? 2:1;
         s.weight = nt * pp.Diffxs_CM(E, std::acos(c)) * (cHi -cLo) * dOmegaPhi / n;
+        rPreprocess = {1, std::acos(c), E};
     }
     else 
     {
@@ -70,6 +71,7 @@ Scattered ForceScattering(G4double E, const PPxsection& pp)
         s.dir1 = G4ThreeVector(std::sin(th) * std::cos(phi), std::sin(th) * std::sin(phi), -std::cos(th));
         s.E1 = E * (A * A + 2. * A * c_CM + 1.) / ((1. + A) * (1. + A));
         s.weight = nt * a * a * 4. * (xMax -xMin) * dOmegaPhi;
+        rPreprocess = {G4lrint(Z), std::acos(c_CM), E};
     }
     s.weight *= nEl;
     return s;

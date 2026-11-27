@@ -11,6 +11,7 @@
 #include "config.hh"
 #include <map>
 #include <utility>
+#include "biasing.hh"
 
 class SensitiveDetector : public G4VSensitiveDetector
 {

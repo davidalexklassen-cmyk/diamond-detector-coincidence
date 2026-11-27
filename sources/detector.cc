@@ -48,6 +48,10 @@ void SensitiveDetector::EndOfEvent(G4HCofThisEvent*)
         man->FillNtupleIColumn(0, 2, id.second);
         man->FillNtupleDColumn(0, 3, e / MeV);
         man->FillNtupleDColumn(0, 4, hit.weight);
+        man->FillNtupleDColumn(0, 5, hit.edep / MeV);
+        man->FillNtupleIColumn(0, 6, rPreprocess.Z);
+        man->FillNtupleIColumn(0, 7, rPreprocess.theta_CM / deg);
+        man->FillNtupleDColumn(0, 8, rPreprocess.EVertex / MeV);
         man->AddNtupleRow(0);
     }
     fHits.clear();

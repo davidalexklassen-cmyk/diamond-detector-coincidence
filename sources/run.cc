@@ -12,6 +12,10 @@ RunAction::RunAction()
     man->CreateNtupleIColumn("Detector");
     man->CreateNtupleDColumn("Edep");
     man->CreateNtupleDColumn("Weight");
+    man->CreateNtupleIColumn("TrueEdep");
+    man->CreateNtupleIColumn("Z");
+    man->CreateNtupleDColumn("Theta_CM");
+    man->CreateNtupleDColumn("EVertex");
     man->FinishNtuple(0);
 
     /*
