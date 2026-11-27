@@ -25,8 +25,8 @@ namespace cfg
     // Detector config
     inline G4double detector_resolution_FWHM = 96 * keV;
     inline G4double detector_rot_world = 0. *deg; // - is rotating detectors left, + right, beamline as reference point
-    inline G4double rot_L = -44.4 *deg;
-    inline G4double rot_R = 44.0 *deg;   
+    inline G4double rot_L = -45 *deg;
+    inline G4double rot_R = 45 *deg;   
     inline G4double radius_L = 26.5 *cm;
     inline G4double radius_R = 22.5 *cm;
     inline G4double active_diamond_detector_width = 4.3*mm;
