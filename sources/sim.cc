@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     cfg::tStart = std::chrono::steady_clock::now();
     cfg::bias_active = std::string(argv[6]) == "ON";
     cfg::beamEnergy = std::stod(argv[7]) * MeV;
-    cfg::detector_rot_world =std::stod(argv[8]);
+    cfg::detector_rot_world =std::stod(argv[8]) * deg;
 
     G4cout << "Biasing:" << (cfg::bias_active ? "ON" : "OFF") << G4endl;
 
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     UImanager->ApplyCommand("/vis/viewer/set/autoRefresh true");
     UImanager->ApplyCommand("/vis/scene/add/trajectories smooth");
     UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate");
-
+    */
     ui->SessionStart();
     
     delete runManager;
